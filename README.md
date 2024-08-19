@@ -35,5 +35,5 @@ node main-execution.js
 
 After installing the dependencies on both server-side and client-side, `./node_modules`, `package.json`, and `package-lock.json` will be added in the directory.
 
-To run parallel genetic algorithm, you need first determine number of workers in the `package.json` and then execute `npm run workers`.
+To run parallel genetic algorithm, you need first determine number of workers in the `package.json` and then execute `npm run workers`. A detailed guide on how to run parallel genetic algorithms will be available soon.
 
