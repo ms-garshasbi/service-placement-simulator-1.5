@@ -32,9 +32,6 @@ Make sure that the server-side simulator is run before the client-side simulator
 node main-execution.js
 ```
 
-npm install fs
-```
-
 After installing the dependencies on both server-side and client-side, `./node_modules`, `package.json`, and `package-lock.json` will be added in the directory.
 
 To run parallel genetic algorithm, you need first determine number of workers in the `package.json` and then execute `npm run workers`.
