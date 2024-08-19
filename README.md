@@ -16,10 +16,26 @@ To run the client-side simulator, make sure you have Node.js installed on your c
 ```bash
 npm init --yes
 npm install axios
+
+### Usage
+To use the simulator, first, its configurations must be set. In the client-side directory, you'll find a `configuration.json` file. In this file, you can determine which algorithm you want to use for service placement; the `cmd` property is used for this purpose, accepting values such as GA or heuristics. Additionally, the scale of systems is determined via the `scale` property, which accepts values including small, medium, large, and xlarge. If you want to create a new scale, the infrastructure properties are set in the `useCase` property. The configuration file also allows you to configure the algorithms settings and set the IP and Port of the server. Additional details about the configuration file can be found at the beginning of the configuration file.
+
+After setting the configuration file, you can run the client-side simulator by executing the following command:
+
+```bash
+node platform-simulator.js
+```
+
+Make sure that the server-side simulator is run before the client-side simulator. The server-side simulator is executed using the following command:
+
+```bash
+node main-execution.js
+```
+
 npm install fs
 ```
 
 After installing the dependencies on both server-side and client-side, `./node_modules`, `package.json`, and `package-lock.json` will be added in the directory.
 
-# service-placement-simulator-1.5
-## Coming soon
+To run parallel genetic algorithm, you need first determine number of workers in the `package.json` and then execute `npm run workers`.
+
