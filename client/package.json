@@ -4,17 +4,7 @@
   "description": "",
   "main": "platform-simulator.js",
   "scripts": {
-    "worker-01": "node worker.js",
-    "worker-02": "node worker.js",
-    "worker-03": "node worker.js",
-    "worker-04": "node worker.js",
-    "worker-05": "node worker.js",
-    "worker-06": "node worker.js",
-    "worker-07": "node worker.js",
-    "worker-08": "node worker.js",
-    "worker-09": "node worker.js",
-    "worker-10": "node worker.js",
-    "workers": "run-p worker-??"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
