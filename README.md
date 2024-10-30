@@ -19,7 +19,7 @@ npm install axios
 ```
 
 ### Usage
-To use the simulator, first, its configurations must be set. In the client-side directory, you'll find a `configuration.json` file. In this file, you can determine which algorithm you want to use for service placement; the `cmd` property is used for this purpose, accepting values such as PSBGA for running the paralell GA. In addition, the scale of systems is determined via the `scale` property, which accepts values including small, medium, large, and xlarge. If you want to create a new scale, the infrastructure properties are set in the `useCase` property. The configuration file also allows you to configure the algorithms settings and set the IP and Port of the server. Additional details about the configuration file can be found at the beginning of the configuration file.
+To use the simulator, first, its configurations must be set. In the client-side directory, you'll find a `configuration.json` file. In this file, you can determine which algorithm you want to use for service placement; the `cmd` property is used for this purpose, accepting values such as `PSBGA` for running the paralell GA. In addition, the scale of systems is determined via the `scale` property, which accepts values including `small`, `medium`, `large`, and `xlarge`. If you want to create a new scale, the infrastructure properties are set in the `useCase` property. The configuration file also allows you to configure the algorithms settings and set the IP and Port of the server.
 
 After setting the configuration file, you can run the client-side simulator by executing the following command:
 
@@ -35,5 +35,21 @@ node main-execution.js
 
 After installing the dependencies on both server-side and client-side, `./node_modules`, `package.json`, and `package-lock.json` will be added in the directory.
 
-To run parallel genetic algorithm, you need first determine number of workers in the `package.json` and then execute `npm run workers`. A detailed guide on how to run parallel genetic algorithms will be available soon.
+To run the parallel genetic algorithm, first specify the number of workers in `package.json`. For example, to set ten workers, include the following script in your `package.json`, then execute `npm run workers` in the command line.
+
+```bash
+  "scripts": {
+    "worker-01": "node worker.js",
+    "worker-02": "node worker.js",
+    "worker-03": "node worker.js",
+    "worker-04": "node worker.js",
+    "worker-05": "node worker.js",
+    "worker-06": "node worker.js",
+    "worker-07": "node worker.js",
+    "worker-08": "node worker.js",
+    "worker-09": "node worker.js",
+    "worker-10": "node worker.js",
+    "workers": "run-p worker-??"
+  },
+```
 
