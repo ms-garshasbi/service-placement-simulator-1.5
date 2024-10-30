@@ -60,14 +60,15 @@ app.post('/json', (req, res) => {
         //const geneticAlgorithm = gA.run().catch(error => console.error("Failed to run the master:", error));
         res.json({GA_result: geneticAlgorithm['servicePlacementResults'], GA_runtime: geneticAlgorithm['runtime']}) 
     }
-    else if (req.body['type'] == 'current' && req.body['algo'] == 'SBGA')
-    {
-        console.log('\nserialSemiBatchGA is running...');
-        const gA = new algorithms.semiBatchGA({ans: req.body});
-        const semiBatchGA = gA.run();
-
-        console.log(semiBatchGA)
-        //res.json({serialSemiBatchGA_result: semiBatchGA['servicePlacementResults'], serialSemiBatchGA_runtime: semiBatchGA['runtime']})
+    else if (req.body['type'] == 'current' && req.body['algo'] == 'PSBGA')
+        {
+            console.log('\nparalellGeneticAlgorithm is running...');
+            const pGA = new algorithms.parallelGeneticAlgorithm();
+            pGA.run(req).then(parallelGeneticAlgorithm => {
+                    res.json({pSBGA_result: parallelGeneticAlgorithm['servicePlacementResults'], pSBGA_runtime: parallelGeneticAlgorithm['runtime']}) 
+                }).catch(error => {
+                    console.error('Error occurred:', error);
+                });
     }
     else
     {
@@ -76,8 +77,6 @@ app.post('/json', (req, res) => {
     }
 })
 
-//app.listen(ipPort, console.log(`Listening to ${ipAddress}:${ipPort} !!!`))
-// Start the server and disable timeout
 const server = app.listen(ipPort, () => {
     console.log(`Listening on ${ipAddress}:${ipPort} !!!`);
 });
