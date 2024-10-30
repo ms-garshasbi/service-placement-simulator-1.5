@@ -19,7 +19,7 @@ npm install axios
 ```
 
 ### Usage
-To use the simulator, first, its configurations must be set. In the client-side directory, you'll find a `configuration.json` file. In this file, you can determine which algorithm you want to use for service placement; the `cmd` property is used for this purpose, accepting values such as GA or heuristics. Additionally, the scale of systems is determined via the `scale` property, which accepts values including small, medium, large, and xlarge. If you want to create a new scale, the infrastructure properties are set in the `useCase` property. The configuration file also allows you to configure the algorithms settings and set the IP and Port of the server. Additional details about the configuration file can be found at the beginning of the configuration file.
+To use the simulator, first, its configurations must be set. In the client-side directory, you'll find a `configuration.json` file. In this file, you can determine which algorithm you want to use for service placement; the `cmd` property is used for this purpose, accepting values such as PSBGA for running the paralell GA. In addition, the scale of systems is determined via the `scale` property, which accepts values including small, medium, large, and xlarge. If you want to create a new scale, the infrastructure properties are set in the `useCase` property. The configuration file also allows you to configure the algorithms settings and set the IP and Port of the server. Additional details about the configuration file can be found at the beginning of the configuration file.
 
 After setting the configuration file, you can run the client-side simulator by executing the following command:
 
