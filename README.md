@@ -2,7 +2,7 @@
 This project simulates a three-tier edge-to-cloud infrastructure and provides different solvers for the placement of AR/VR services in edge-to-cloud AR/VR systems. The simulator follows a server-client architecture, where the client-side entity sends infrastructure and service characteristics in JSON format to the server-side. On the server, the service placement is executed based on the configurations and algorithm determined by the client in parallel manner. Then, the results, such as total response time and system reliability, are sent back by the server to the client.
 
 ### Prerequisites
-To run the simulator, you need to install certain dependencies. In this repository, there are two folders (i.e., clinet and server): one designed to run on the server-side and the other on the client-side. To execute the server-side simulator, install Node.js on the server machine (preferably Ubuntu), navigate to the project directory, and install the following dependencies.
+To run the simulator, you need to install certain dependencies. In this repository, there are two folders (i.e., clinet and server): one designed to run on the server-side and the other on the client-side. To execute the server-side simulator, install Node.js on the server machine (preferably Ubuntu), navigate to the project directory, and install the following dependencies. The dependencies should also be installed for workers (in the worker folder).
 
 ```bash
 npm init --yes
