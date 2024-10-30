@@ -7,10 +7,11 @@ const ip = configurations['address']['ip'];
 const port = configurations['address']['port'];
 let url = `http://${ip}:${port}/json`;
 
+
 function sendAxiosPost(url, dataObj) {
     // Setting the timeout value
     const config = {
-        timeout: 0 // Timeout in milliseconds, e.g., 60000 ms for 1 minute
+        timeout: 0 // Timeout in milliseconds
     };
 
     axios.post(url, dataObj, config)
@@ -569,8 +570,8 @@ class serviceGenerator {
             const maxMemPerSC = platformMemory / totalSCs;
             const maxDiskPerSC = platformDisk / totalSCs;
 
-            const p1 = 0.7;
-            const p2 = 1.2;
+            const p1 = 0.8;
+            const p2 = 1;
 
 
             let jsonResult = [];
@@ -602,16 +603,45 @@ class serviceGenerator {
                     for (let v = 0; v < this.numVersions; v++)
                     {
 
+                        const provider = this.getProvider();
+                        const codec = this.getCodecType();
+                        let w1 = 1;
+                        let w2 = 1;
+                        if (provider == 'AWS')
+                        {
+                            w1 = 1.1
+                        }
+                        else if (provider == 'Azure')
+                        {
+                            w1 = 1.2
+                        }
+                        else if (provider == 'Ericsson')
+                        {
+                            w1 = 1.3
+                        }
+                        else if (provider == 'K8w')
+                        {
+                            w1 = 0.90
+                        }
+
+                        if (codec == 'H256')
+                        {
+                            w2 = 1
+                        }
+                        else if (codec == 'H264')
+                        {
+                            w2 = 1.3
+                        }
                         const version = {
                             versionNumber: v + 1,
                             characteristics: {
-                                cpu: getRandomValue(maxComPerSC * p1, maxComPerSC * p2),
-                                memory:getRandomValue(maxMemPerSC * p1, maxMemPerSC * p2),
-                                dataSize: getRandomValue(this.minDataSizeCommunication,this.maxDataSizeCommunication),
-                                disk: getRandomValue(maxDiskPerSC * p1, maxDiskPerSC * p2),
-                                provider: this.getProvider(),
-                                codecType: this.getCodecType(),
-                                reliabilityScore: this.getReliabilityScore(this.minReliability, this.maxReliability),
+                                cpu: getRandomValue(maxComPerSC * p1 * w2, maxComPerSC * p2 * w2),
+                                memory:getRandomValue(maxMemPerSC * p1* w1, maxMemPerSC * p2* w1),
+                                dataSize: getRandomValue(this.minDataSizeCommunication* w1,this.maxDataSizeCommunication* w1),
+                                disk: getRandomValue(maxDiskPerSC * p1* w1, maxDiskPerSC * p2* w1),
+                                provider: provider,
+                                codecType: codec,
+                                reliabilityScore: this.getReliabilityScore(this.minReliability - (w1 * 0.025), this.maxReliability),
                                 containerSize: getRandomValue(32000, 64000)
                             }
                         };
@@ -896,12 +926,6 @@ class commands {
         const dataSize = [configurations['useCase']['serviceConfig']['minDataSize'], configurations['useCase']['serviceConfig']['maxDataSize']] 
         
         const componentConnections = service.connections(services); //DAG
-        // fs.readFile("newUsecase/componentsConnections.json", 'utf8', (err, data) => {
-        //     if (err) 
-        //     {
-        //       console.error('Error reading file:', err);
-        //     }
-        //   });
 
         //setting
         const dataSetting = 'Total CPU Capacity:' + ` ${platformComputingCapacity}` +
@@ -922,9 +946,6 @@ class commands {
                             '\nNumber of APs:' + ` ${numAPs}` +
                             '\nNumber of edge nodes:' + ` ${numEdgeNodes}` +
                             '\nNumber of cloud nodes:' + ` ${numCloudNodes}`;
-
-        //const filePath = 'setup.txt';
-        //fs.writeFileSync(filePath, dataSetting);
         console.log(dataSetting);
 
         if (!fs.existsSync('newUsecase')) {
@@ -973,7 +994,7 @@ class commands {
             }
         });
         }
-        else if (configurations['algo'] == "SBGA")
+        else if (configurations['algo'] == "PSBGA")
         {
             sendAxiosPost(url, {
                 computingNodes: computingNodes,
@@ -982,11 +1003,11 @@ class commands {
                 services: services,
                 componentConnections: componentConnections,
                 infraConnections: infraConnections,
-        
+
                 type: configurations['type'],
                 scale: configurations['scale'],
                 algo: configurations['algo'],
-                configsGA: {
+                configsPGA: {
                     iteration: configurations['geneticAlgorithm']['iterations'],
                     crossoverRate: configurations['geneticAlgorithm']['crossoverRate'],
                     mutationRate: configurations['geneticAlgorithm']['mutationRate'],
@@ -1011,6 +1032,108 @@ class commands {
             })
         }
     }
+
+    tuningCommand()
+    {
+        if (configurations['scale'] != 'ave')
+        {
+            const usersNodes = readJSON(`./${configurations['scale']}/users.json`);
+            const helperNodes = readJSON(`./${configurations['scale']}/helpers.json`);
+            const computingNodes = readJSON(`./${configurations['scale']}/nodes.json`);
+            const services = readJSON(`./${configurations['scale']}/services.json`);
+            const componentConnections = readJSON(`./${configurations['scale']}/componentsConnections.json`);
+            const infraConnections = readJSON(`./${configurations['scale']}/infraConnections.json`);
+            
+            let grid;
+            if (configurations['algo'] == 'GA')
+            {
+                grid = configurations['gridTuning']['GA']
+            }
+            sendAxiosPost(url, {
+                characteristics: {
+                usersNodes: usersNodes,
+                helperNodes: helperNodes,
+                computingNodes: computingNodes,
+                services: services,
+                componentConnections: componentConnections,
+                infraConnections: infraConnections,
+                },
+                type: configurations['type'],
+                algo: configurations['algo'],
+                scale: configurations['scale'],
+                gridSearch: grid
+            })
+        }
+        else if (scale == 'ave')
+        {
+            const usersNodes_Small = readJSON('./small/users.json');
+            const helperNodes_Small = readJSON('./small/helpers.json');
+            const computingNodes_Small = readJSON('./small/nodes.json');
+            const services_Small = readJSON('./small/services.json');
+            const componentConnections_Small = readJSON('./small/connections.json');
+        
+            const usersNodes_Medium = readJSON('./medium/users.json');
+            const helperNodes_Medium = readJSON('./medium/helpers.json');
+            const computingNodes_Medium = readJSON('./medium/nodes.json');
+            const services_Medium = readJSON('./medium/services.json');
+            const componentConnections_Medium = readJSON('./medium/connections.json');
+        
+            const usersNodes_Larg = readJSON('./large/users.json');
+            const helperNodes_Larg = readJSON('./large/helpers.json');
+            const computingNodes_Larg = readJSON('./large/nodes.json');
+            const services_Larg = readJSON('./large/services.json');
+            const componentConnections_Larg = readJSON('./large/connections.json');
+        
+            const usersNodes_xLarg = readJSON('./xLarge/users.json');
+            const helperNodes_xLarg = readJSON('./xLarge/helpers.json');
+            const computingNodes_xLarg = readJSON('./xLarge/nodes.json');
+            const services_xLarg = readJSON('./xLarge/services.json');
+            const componentConnections_xLarg = readJSON('./xLarge/connections.json');
+        
+            sendAxiosPost(url, {
+                small: {
+                usersNodes: usersNodes_Small,
+                helperNodes: helperNodes_Small,
+                computingNodes: computingNodes_Small,
+                services: services_Small,
+                componentConnections: componentConnections_Small,
+                },
+                medium: {
+                usersNodes: usersNodes_Medium,
+                helperNodes: helperNodes_Medium,
+                computingNodes: computingNodes_Medium,
+                services: services_Medium,
+                componentConnections: componentConnections_Medium,
+                },
+                large: {
+                usersNodes: usersNodes_Larg,
+                helperNodes: helperNodes_Larg,
+                computingNodes: computingNodes_Larg,
+                services: services_Larg,
+                componentConnections: componentConnections_Larg,
+                },
+                xLarge: {
+                usersNodes: usersNodes_xLarg,
+                helperNodes: helperNodes_xLarg,
+                computingNodes: computingNodes_xLarg,
+                services: services_xLarg,
+                componentConnections: componentConnections_xLarg,
+                },
+                type: configurations['type'],
+                algo: configurations['algo'],
+                scale: "ave"
+            })
+        }
+    }
+
+    optConfigCommand()
+    {
+        sendAxiosPost(url, {
+            type: configurations['type'],
+            algo: configurations['algo'],
+            scale: configurations['scale']
+        })
+    }
 }
 
 const cmd = new commands();
@@ -1022,4 +1145,12 @@ if (configurations['type'] == 'new')
 else if (configurations['type'] == 'current')
 {
     cmd.runAlgorithms();
+}
+else if (configurations['type'] == 'tuning')
+{
+    cmd.tuningCommand();
+}
+else if (configurations['type'] == 'optConfig')
+{
+    cmd.optConfigCommand();
 }
